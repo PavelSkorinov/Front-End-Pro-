@@ -10,11 +10,12 @@
     <script>
         alert('Привет!');    
         var userAge = +prompt('Сколько Вам лет?', '');
-        if (userAge >= 5) {
+        var userAgeCorrect = userAge % 10;
+        if (userAgeCorrect >= 5 || userAgeCorrect === 0) {
             alert(`Тебе ${userAge} лет!`)
-        } else if (userAge < 5 && userAge > 1) {
+        } else if (userAgeCorrect <= 4 && userAgeCorrect >= 2) {
             alert(`Тебе ${userAge} года!`)
-        } else if (userAge == 1) {
+        } else if (userAgeCorrect == 1) {
             alert(`Тебе ${userAge} год!`)
         } else {
             alert('Повторите попытку') 
