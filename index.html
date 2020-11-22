@@ -1,8 +1,24 @@
-<html>
-    <head>
-        <link type="text/css" rel="stylesheet" media="all" href="lib/style.css" />
-    </head>
-    <body>
-    <iframe src="lib/hello.html" width="200" height="200" />
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript</title>
+</head>
+<body>
+    <h1>Hello, World!</h1>
+    <script>
+        alert('Привет!');    
+        var userAge = +prompt('Сколько Вам лет?', '');
+        if (userAge % 10 <= 4 && userAge % 10 >= 2 && (userAge % 100 < 10 || userAge % 100 >= 20)) {
+            alert(`Тебе ${userAge} года!`)
+        } else if (userAge == null || userAge == '') {
+            alert('Повторите попытку') 
+        } else if (userAge % 10 == 1 && userAge % 100 !== 11) {
+            alert(`Тебе ${userAge} год!`)
+        } else {
+            alert(`Тебе ${userAge} лет!`)
+        };
+    </script>
+</body>
 </html>
