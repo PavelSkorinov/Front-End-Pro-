@@ -1,59 +1,65 @@
-function cylinder(radius, height) {
-    let square = 2 * Math.PI * radius * height
-    let volume = square * height
-    let squareCorrect = square.toFixed(2)
-    let volumeCorrect = volume.toFixed(2)
-    alert("Площадь цилиндра - " + squareCorrect) 
-    alert("Объем цилиндра - " + volumeCorrect)
+function calcCylinder(radius, height) {
+    var square = 2 * Math.PI * radius * height;
+    var volume = square * height;
+    var cylinder = {
+        square: square.toFixed(2),
+        volume: volume.toFixed(2)
+    }
+
+    return cylinder
+
 };
 
-// cylinder(6, 6);
+// console.log(calcCylinder(6, 6));
+
 
 
 function getResult(firstNum, secNum, symbol) {
     if (symbol == "+") {
 
-        alert(firstNum + secNum);
+        return firstNum + secNum;
 
     } else if (symbol == "-") {
 
-        alert(firstNum - secNum);
+        return firstNum - secNum;
 
     } else if (symbol == "*") {
 
-        alert(firstNum * secNum);
+        return firstNum * secNum;
 
     } else if (symbol == "**") {
 
-        alert(firstNum ** secNum);
+        return firstNum ** secNum;
 
     } else if (symbol == "/") {
 
-        alert(firstNum / secNum);
+        return firstNum / secNum;
 
     }
 };
 
-// getResult(2, 4, "**");
+// console.log(getResult(2, 4, "**"));
 
 
 function isCharPresent(str, symbol) {
-    if (str.search(symbol) != -1) {
-        alert(true);
-    } else {
-        alert(false);
-    }
+    for ( i = 0; i < str.length; i++) {
+        if (str.startsWith(symbol, i) == true) {
+            return true
+        }
+    };   
+    return false 
 }
 
-// isCharPresent("Da", "9");
+// console.log(isCharPresent("Da", "u"));
 
 
 function charIndexOf(str, symbol) {
-    if (str.search(symbol) != -1) {
-        alert(symbol);
-    } else {
-        alert(-1);
-    };
+    for ( i = 0; i < str.length; i++) {
+        if (str.startsWith(symbol, i) == true) {
+            return i
+        }
+    };   
+    return -1 
 }
 
-// charIndexOf("Anton", "o");
+// console.log(charIndexOf("Bomba", "d"));
