@@ -1,17 +1,13 @@
-function calcCylinder(radius, height) {
-    var square = 2 * Math.PI * radius * height;
-    var volume = square * height;
-    var cylinder = {
-        square: square.toFixed(2),
-        volume: volume.toFixed(2)
-    }
-
-    return cylinder
-
+var cylinder = {
+    radius: 6,
+    height: 8,
+    square: function(radius, height) {
+        return (2 * Math.PI * radius * height).toFixed(2);
+    },
+    volume: function(square, height) {
+        return (square * height).toFixed(2);
+    }    
 };
-
-// console.log(calcCylinder(6, 6));
-
 
 
 function getResult(firstNum, secNum, symbol) {
@@ -63,3 +59,5 @@ function charIndexOf(str, symbol) {
 }
 
 // console.log(charIndexOf("Bomba", "d"));
+
+  
