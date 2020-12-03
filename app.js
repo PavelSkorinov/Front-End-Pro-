@@ -1,9 +1,11 @@
 var arr = [1, 2, 3, 4];
 function map(array, mapFn) {
-    return array.reduce(function(resultArr, el) {           
-        resultArr.push(mapFn(el));
-        return resultArr;
-    }, [])
+    var resultArray = [];
+    for(var i = 0; i < array.length; i++) {
+    var callback = mapFn(array[i], i, array)  
+        resultArray.push(callback)
+    };
+    return resultArray;
 }
   
 //   var res = map(arr, function(el) {
@@ -14,13 +16,14 @@ function map(array, mapFn) {
 
 var arr2 = [1, 2, 3, 4];
 function filter(array, filterFn) {
-    return array.reduce(function(resultArr, el) {
-        var canAdd = filterFn(el);
-        if (canAdd) {
-            resultArr.push(el);
+    var resultArray = [];
+    for(var i = 0; i < array.length; i++) {
+        var callback = filterFn(array[i], i, array)
+        if(callback) {
+            resultArray.push(array[i])
         }  
-        return resultArr;         
-    }, [])
+    }
+    return resultArray;
 }
 
 //   var res = filter(arr, function(el) {
@@ -60,8 +63,8 @@ function groupByMsg(arr) {
 }, {});
 } 
   
-var res = groupByMsg(notification);
-console.log(res);
+// var res = groupByMsg(notification);
+// console.log(res);
 
 
   
