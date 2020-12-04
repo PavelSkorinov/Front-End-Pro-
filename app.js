@@ -1,63 +1,43 @@
-var cylinder = {
-    radius: 6,
-    height: 8,
-    square: function(radius, height) {
-        return (2 * Math.PI * radius * height).toFixed(2);
-    },
-    volume: function(square, height) {
-        return (square * height).toFixed(2);
-    }    
+function getValues(obj) {
+    return Object.values(obj);
 };
 
+// var object = {
+//     name: "Toha",
+//     surname: "Antoha",
+//     age: 21
+// }
 
-function getResult(firstNum, secNum, symbol) {
-    if (symbol == "+") {
+// console.log(getValues(object))
 
-        return firstNum + secNum;
 
-    } else if (symbol == "-") {
 
-        return firstNum - secNum;
-
-    } else if (symbol == "*") {
-
-        return firstNum * secNum;
-
-    } else if (symbol == "**") {
-
-        return firstNum ** secNum;
-
-    } else if (symbol == "/") {
-
-        return firstNum / secNum;
-
-    }
+function getKeys(obj) {
+    return Object.keys(obj);
 };
 
-// console.log(getResult(2, 4, "**"));
+// var object = {
+//     name: "Toha",
+//     surname: "Antoha",
+//     age: 21
+// }
+
+// console.log(getKeys(object))
 
 
-function isCharPresent(str, symbol) {
-    for ( i = 0; i < str.length; i++) {
-        if (str.startsWith(symbol, i) == true) {
-            return true
-        }
-    };   
-    return false 
-}
 
-// console.log(isCharPresent("Da", "u"));
+function getEntries(obj) {
+   return Object.entries(obj);
+};
+
+// var object = {
+//     name: "Toha",
+//     surname: "Antoha",
+//     age: 21
+// }
+
+// console.log(getEntries(object))
 
 
-function charIndexOf(str, symbol) {
-    for ( i = 0; i < str.length; i++) {
-        if (str.startsWith(symbol, i) == true) {
-            return i
-        }
-    };   
-    return -1 
-}
 
-// console.log(charIndexOf("Bomba", "d"));
 
-  
