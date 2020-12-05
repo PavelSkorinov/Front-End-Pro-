@@ -1,5 +1,9 @@
 function getValues(obj) {
-    return Object.values(obj);
+    var result = [];
+    for(key in obj) {
+        result.push(obj[key])
+    };
+    return result;
 };
 
 // var object = {
@@ -13,7 +17,11 @@ function getValues(obj) {
 
 
 function getKeys(obj) {
-    return Object.keys(obj);
+    var result = [];
+    for(key in obj) {
+        result.push(key)
+    };
+    return result;
 };
 
 // var object = {
@@ -27,7 +35,11 @@ function getKeys(obj) {
 
 
 function getEntries(obj) {
-   return Object.entries(obj);
+    var resultArray = [];
+    for(var key in obj) { 
+        resultArray.push([key, obj[key]]);
+    };
+    return resultArray;
 };
 
 // var object = {
