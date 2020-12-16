@@ -5,7 +5,7 @@ let toDoList = {
     },
     createTask(title) {
         const value = title.trim();
-        const existingValue = this.tasks.find((el) => el.title === value);
+        const existingValue = this.findExistingValue(value);
         if (value) {
             if (existingValue) {
                 return console.log("Error, this task is already exist")
@@ -20,19 +20,20 @@ let toDoList = {
             };
         };
     },
-    deleteTask(index, confirm) {
-        const deletedTask = this._tasks[index];
-        if (confirm()) {
-            this._tasks.splice(index, 1);
+    deleteTask(id, confirm) {
+        const index = this.findTaskId(id);
+        const deletedTask = this.tasks[index];
+        if (confirm) {
+            this.tasks.splice(index, 1);
         };
-        return deletedTask;
+        return deletedTask.id;
     },
     changeTask(updTask, newTitle, confirm) {
-        const index = this.tasks.findIndex((el) => el.id === updTask.id);
-        const existingValue = this.tasks.find((el) => el.title === newTitle);
+        const index = this.findTaskId(updTask.id);
+        const existingValue = this.findExistingValue(newTitle);
         if (existingValue) {
             return console.log("Error, this task is already exist")
-        } else if (confirm() && existingValue === false) {
+        } else if (confirm && existingValue === false) {
             this._tasks.splice(index, 1, {
                 id: updTask.id,
                 title: newTitle,
@@ -42,7 +43,7 @@ let toDoList = {
         }
     },
     setComplete(task) {
-        let index = this.tasks.findIndex((el) => el.id === task.id);
+        const index = this.findTaskId(task.id); 
         this._tasks.splice(index, 1, {
             id: task.id,
             title: task.title,
@@ -51,13 +52,19 @@ let toDoList = {
         return this._tasks[index];
     },
     showAllTasks() {
-        let tasksInProgress = this._tasks.filter((task) => task.status === 'In Progress')
-        let tasksCompleted = this.tasks.length - tasksInProgress.length;
+        const tasksInProgress = this._tasks.filter((task) => task.status === 'In Progress')
+        const tasksCompleted = this.tasks.length - tasksInProgress.length;
         const taskStatus = {
-            completed: tasksInProgress.length,
-            uncompleted: tasksCompleted
+            completed:tasksCompleted,
+            uncompleted: tasksInProgress.length
         };
         return taskStatus;
+    },
+    findExistingValue(value) {
+        return this.tasks.find((el) => el.title === value);
+    },
+    findTaskId(value) {
+        return this.tasks.findIndex((el) => el.id === value);
     }
 };
 
@@ -83,12 +90,9 @@ toDoList.changeTask(toDoList.tasks[4], 'Anton', confirm("Are you sure?"));
 
 console.log(toDoList.showAllTasks());
 
+toDoList.deleteTask(toDoList.tasks[4].id, confirm("Are you sure?"));
 
-
-
-
-
-
+console.log(toDoList.tasks);
 
 
 
