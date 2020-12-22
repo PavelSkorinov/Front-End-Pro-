@@ -1,34 +1,19 @@
-let sum = function(initial) {
-    let def = initial;
-
-    return function (count) {
-        def += count;
-        return def;
+const palindrome = function findPalindrome(number, stepCount = 0) {
+    let numberToStr = number.toString();
+    let reverseNumberToStr = numberToStr.split("").reverse().join("");
+    const res = {
+        result: number,
+        steps: stepCount
+    };
+    if (numberToStr === reverseNumberToStr) { 
+        return res;   
+    } else { 
+        let parse = number + parseInt(reverseNumberToStr);
+        stepCount++;
+        return findPalindrome(parse, stepCount);
     };
 };
 
-let result = sum(0);
-
-// console.log(result(3));
-// console.log(result(3));
-// console.log(result(8));
-
-function createCounter(startValue, stepValue) {
-    let count = startValue;
-    const step = stepValue;
-    return function (reset = false) {
-        if (reset) {
-            count = startValue;
-        } else {
-            count += step;
-        };
-        return count;
-    };
-};
-
-const counter = createCounter(12, 20);
-
-console.log(counter());
-console.log(counter(true));
-console.log(counter());
-console.log(counter(true));
+console.log(palindrome(312));
+console.log(palindrome(4843));
+console.log(palindrome(96));
