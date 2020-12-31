@@ -1,122 +1,68 @@
-function Students(name, surname, birthYear) {
-    this.name = name;
-    this.surname = surname;
-    this.birthYear = birthYear;
-    const attendance = Array.apply(null, Array(30));
-    const marks = Array.apply(null, Array(30));
-    this.attendance = attendance;
-    this.marks = marks;
-};
-
-Students.prototype.present = function () {
-    if (this.attendance.length <= 30) {
-        let value = this.attendance.findIndex(el => el === undefined);
-        let newValue = this.attendance[value] = true;
-        return newValue;
-    } else return console.log('Attendance is filled');
-};
-
-Students.prototype.absent = function () {
-    if (this.attendance.length <= 30) {
-        let value = this.attendance.findIndex(el => el === undefined);
-        let newValue = this.attendance[value] = false;
-        return newValue;
-    } else return console.log('Attendance is filled');
-};
-
-Students.prototype.mark = function (mark) {
-    if (this.marks.length <= 30) {
-        if (mark >= 0 && mark <= 10) {
-            let value = this.marks.findIndex(el => el === undefined);
-            let newValue = this.marks[value] = mark;
-            return newValue;
-        } else return console.log('Wrong number')
-    } else return console.log('Marks is filled');
-};
- 
-Students.prototype.getAge = function () {
-    return (new Date).getFullYear() - this.birthYear;
-};
-
-Students.prototype.summary = function () {
-    let averageAttendance = this.attendance.reduce((a, b) => a + b) / this.attendance.length;
-    let averageMarks = this.marks.reduce((a, b) => a + b) / this.marks.length;
-    if (averageAttendance >= 0.9 && averageMarks >= 9) {
-        console.log('Ути какой молодчинка!');
-    } else if (averageAttendance <= 0.9 && averageMarks <= 9) {
-        console.log('Редиска!');
-    } else if (averageAttendance <= 0.9 || averageMarks <= 9) {
-        console.log('Норм, но можно лучше');
+const TASKS_KEY = "tasks"
+const toDoList = {
+    _tasks: [],
+    get tasks() {
+        const value = localStorage.getItem(TASKS_KEY);
+        if(value) {
+         return JSON.parse(value);
+        }
+        return this._tasks;
+    },
+    createTask(title) {
+        let task = {
+            id: Date.now(),
+            title: title,
+            status: 'In Progress'
+        };
+        this._tasks.push(task);
+        this.toLocalStorage();
+        return task;
+    },
+    deleteTask(index) {
+        let deletedTask = this._tasks[index];
+        this._tasks.splice(index, 1);
+        this.toLocalStorage();
+        return deletedTask;
+    },
+    changeTask(updTask, newTitle) {
+        let index = this.tasks.findIndex((el) => el.id === updTask.id);
+        this._tasks.splice(index, 1, {
+            id: updTask.id,
+            title: newTitle,
+            status: updTask.status  
+        });
+        this.toLocalStorage();
+        return this._tasks[index];
+    },
+    setComplete(task) {
+        let index = this.tasks.findIndex((el) => el.id === task.id);
+        this._tasks.splice(index, 1, {
+            id: task.id,
+            title: task.title,
+            status: "Completed" 
+        });
+        this.toLocalStorage();
+        return this._tasks[index];
+    },
+    toLocalStorage() {     
+        localStorage.setItem(TASKS_KEY, JSON.stringify(this._tasks));
     }
 };
 
-const student = new Students('Anton', 'Poznyakov', 2001);
-const student2 = new Students('Mark', 'Antonov', 1998);
-const student3 = new Students('Semen', 'Kozlovskiy', 2002);
-const student4 = new Students('Ivan', 'Petrov', 1997);
+Object.defineProperty(toDoList, '_tasks', {
+    writable: false,
+    enumerable: false,
+    configurable: false
+});
 
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.present();
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.summary();
-console.log(student);
-console.log(student2);
-console.log(student3);
-console.log(student4);
+toDoList.createTask('Pahan');
+
+toDoList.deleteTask(0);
+
+toDoList.createTask('Anton');
+
+toDoList.changeTask(toDoList.tasks[0], "Hleb");
+
+toDoList.setComplete(toDoList.tasks[0]);
+
+console.log(toDoList.tasks);
