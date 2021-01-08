@@ -1,144 +1,111 @@
-class Students {
-    constructor(name, surname, birthYear) {
+const TASKS_KEY = "tasks";
+class List {
+    tasks = []; 
+
+    constructor(name) {
         this.name = name;
-        this.surname = surname;
-        this.birthYear = birthYear;
-        const attendance = new Array(30);
-        const marks = new Array(30);
-        this.attendance = attendance;
-        this.marks = marks;
-        this.attendanceCount = 0;
-        this.markCount = 0;
     };
 
-    present() {
-        try {                
-            if (this.attendanceCount >= 30) {
-                throw new Error('Attendance is full');
-            } else { 
-            let value = this.attendance.findIndex((el) => el === undefined);
-            this.attendance[value] = true;
-            this.attendanceCount+= 1;
-            return this.attendance[value];
-            };
-        } catch(er) {
-            console.log(`${er.name}: ${er.message}`)
+    get tasks() {
+        const value = localStorage.getItem(TASKS_KEY);
+        if(value) {
+         return JSON.parse(value);
         }
+        return this.tasks;
     };
 
-    absent() {
-        try {                
-            if (this.attendanceCount >= 30) {
-                throw new Error('Attendance is full');
-            } else { 
-            let value = this.attendance.findIndex((el) => el === undefined);
-            this.attendance[value] = false;
-            this.attendanceCount+= 1;
-            return this.attendance[value];
-            };
-        } catch(er) {
-            console.log(`${er.name}: ${er.message}`)
-        }
-    };
-
-    mark(mark) {
-        try {
-            if (this.markCount >= 30) {
-                throw new Error('Wrong number');
-            } else {
-                if (mark < 0 || mark > 10) {
-                    throw new Error('Wrong number');
-                } else {
-                let value = this.marks.findIndex(el => el === undefined);
-                this.marks[value] = mark;
-                this.markCount+= 1;
-                return this.marks[value];
-                }; 
-            } 
-        } catch(er) {
-            console.log(`${er.name}: ${er.message}`)
-        }
-    };
-
-    getAge() {
-        return (new Date).getFullYear() - this.birthYear;
-    };
-
-    summary() {
-        let averageAttendance = this.attendance.reduce((accumulator, value) => accumulator + value) / this.attendance.length;
-        let averageMarks = this.marks.reduce((accumulator, value) => accumulator + value) / this.marks.length;
-        if (averageAttendance >= 0.9 && averageMarks >= 9) {
-            console.log('Ути какой молодчинка!');
-        } else if (averageAttendance <= 0.9 && averageMarks <= 9) {
-            console.log('Редиска!');
-        } else if (averageAttendance <= 0.9 || averageMarks <= 9) {
-            console.log('Норм, но можно лучше');
+    createTask(title) {
+        let task = {
+            id: Date.now(),
+            title: title,
+            status: 'In Progress'
         };
+        this.tasks.push(task);
+        this.toLocalStorage();
+        return task;
+    };
+
+    deleteTask(index) {
+        let deletedTask = this.tasks[index];
+        this.tasks.splice(index, 1);
+        this.toLocalStorage();
+        return deletedTask;
+    };
+
+    changeTask(updTask, newTitle) {
+        let index = this.tasks.findIndex((el) => el.id === updTask.id);
+        console.log(updTask)
+        this.tasks.splice(index, 1, {
+            id: updTask.id,
+            title: newTitle,
+            status: updTask.status  
+        });
+        this.toLocalStorage();
+        return this.tasks[index];
+    };
+
+    toLocalStorage() {     
+        localStorage.setItem(TASKS_KEY, JSON.stringify(this.tasks));
     };
 };
 
-const student = new Students('Anton', 'Poznyakov', 2001);
-const student2 = new Students('Mark', 'Antonov', 1998);
-const student3 = new Students('Semen', 'Kozlovskiy', 2002);
-const student4 = new Students('Ivan', 'Petrov', 1997);
+class ToDoList extends List {
 
+    constructor(name) {
+        super(name)
+    };
 
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.absent();
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.mark(4);
-student.summary();
-console.log(student);
-console.log(student2);
-console.log(student3);
-console.log(student4);
+    setComplete(task) {
+        let index = this.tasks.findIndex((el) => el.id === task.id);
+        this.tasks.splice(index, 1, {
+            id: task.id,
+            title: task.title,
+            status: "Completed" 
+        });
+        this.toLocalStorage();
+        return this.tasks[index];
+    };
+
+    showAllTasks() {
+        const tasksInProgress = this.tasks.filter((task) => task.status === 'In Progress')
+        const tasksCompleted = this.tasks.length - tasksInProgress.length;
+        const taskStatus = {
+            completed: tasksCompleted,
+            uncompleted: tasksInProgress.length
+        };
+        return taskStatus;
+    };
+};
+
+class ContactList extends List {
+
+    constructor(name) {
+        super(name);
+    };
+
+    findByTitle(title) {
+        const filteredValue = this.tasks.filter((task) => task.title === title)
+        return filteredValue;
+    }
+};
+
+const contactList = new ContactList('First Contact List');
+const taskList = new ToDoList('First todo')
+taskList.createTask("Task #1");
+contactList.createTask("Anton Sukhaiev");
+contactList.createTask("Zdes mojet byt vasha reklama");
+contactList.createTask("Andrei Petrov");
+contactList.createTask("Anatoliy Klimchuk");
+taskList.createTask("Task #2");
+contactList.createTask("Zdes mojet byt vasha reklama");
+contactList.createTask("Vasya Pupkin");
+contactList.createTask("Petya Dyachenko");
+contactList.createTask("Zdes mojet byt vasha reklama");
+contactList.createTask("Oleg Kozlovskiy");
+taskList.deleteTask(1);
+taskList.createTask("Task #3");
+taskList.changeTask(taskList.tasks[0], "Task321312321");
+taskList.setComplete(taskList.tasks[0], "Task321312321");
+taskList.showAllTasks();
+console.log(taskList);
+console.log(contactList.findByTitle("Zdes mojet byt vasha reklama"));
