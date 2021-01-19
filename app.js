@@ -1,61 +1,41 @@
+'use strict'
 
-function generateList(array) {
+const $squareList = document.querySelectorAll(".field");
 
-    const $ul = document.createElement('ul');
 
-    for (let i = 0; i < array.length; i++) { 
-
-        const $li = document.createElement('li');
-
-        if (Array.isArray(array[i])) {
-
-            $li.appendChild(generateList(array[i]));
-
-        } else {
-            $li.innerHTML = array[i];
-        };
-
-        $ul.appendChild($li);
-    };
-
-    return $ul;
-
-};
-const arr = [1, [1.1, 1.2, [1.21, [1.22, 1.222]], 1.3], 2, 3];
-
-document.body.appendChild(generateList(arr));
-
-const $table = document.createElement('table');
-$table.style.borderCollapse = 'collapse';
-$table.style.border = '1px solid black';
-const $tBody = document.createElement('tbody');
-const $tr = document.createElement('tr');
-$tr.style.height = '30px'
-const $td = document.createElement('td');
-$td.style.border = '1px solid black'
-$td.style.textAlign = 'center'
-$td.style.width = '30px'
-let i = 0;
-let count = 1;
-while (i < 10) {
-    const row = $tr.cloneNode();
-
-    j = 0;
-
-    while (j < 10) {
-        const column = $td.cloneNode()
-
-        column.innerHTML = count;
-
-        row.appendChild(column);
-        j++;
-        count++;
-    };
-    $tBody.appendChild(row);
-    i++;
+function styleField(el) {
+    const changeColor = el.style.backgroundColor;
+    if (changeColor === 'green') {
+        el.style.backgroundColor = "yellow";
+    }
+    else if (changeColor === 'blue'){
+        el.style.backgroundColor = "green";
+    } else {
+        el.style.backgroundColor = "blue";
+    }
+    el.parentNode.appendChild(el);
 };
 
-$table.appendChild($tBody);
-document.body.appendChild($table);
+$squareList.forEach(field => {
+    field.addEventListener("click", (event) => {
+        styleField(event.target)
+    })
+});
+
+function toggleClass(target, value) {
+    let classArr = target.className.split(' ');
+    if (classArr.includes(value) ) {
+        classArr = classArr.filter(el => el !== value)
+    } else {
+        classArr.push(value)
+    };
+    target.className = classArr.join(' ');
+};
+
+const $span = document.querySelector(".ff");
+
+toggleClass($span, 'sdsds');
+toggleClass($span, 'sdsds');
+toggleClass($span, 'sddsadasddasdsa');
 
 
