@@ -1,8 +1,67 @@
-<html>
-    <head>
-        <link type="text/css" rel="stylesheet" media="all" href="lib/style.css" />
-    </head>
-    <body>
-    <iframe src="lib/hello.html" width="200" height="200" />
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript</title>
+    <style>
+        .field {
+            display: block;
+            height: 200px;
+            width: 200px;
+            margin: 40px;
+            margin-left: 100px;
+            border: 1px solid black;
+            color: gray;
+            font-size: 24px;
+            text-align: center;
+        }
+        .button {
+            height: 50px;
+            width: 50px;
+            position: absolute;
+        }
+        .blocks {
+            display: flex;
+            align-items: center
+        }
+        .minus {
+            margin-left: 20px;
+        }
+        .plus {
+            margin-left: 340px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="blocks">
+            <button class="button minus">-</button>
+            <input class="field" type="text" value="0"></input>
+            <button class="button plus">+</button>
+        </div>
+        <div class="blocks">
+            <button class="button minus">-</button>
+            <input class="field" type="text" value="0"></input>
+            <button class="button plus">+</button>
+        </div>
+        <div class="blocks">
+            <button class="button minus">-</button>
+            <input class="field" type="text" value="0"></input>
+            <button class="button plus">+</button>
+        </div>
+        <div class="blocks">
+            <button class="button minus">-</button>
+            <input class="field" type="text" value="0"></input>
+            <button class="button plus">+</button>
+        </div>
+        <div class="blocks">
+            <button class="button minus">-</button>
+            <input class="field" type="text" value="0"></input>
+            <button class="button plus">+</button>
+        </div>                       
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="app.js"></script>
+</body>
 </html>
