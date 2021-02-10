@@ -1,33 +1,49 @@
-function reverseString(str) {
-    if (str === "")
-        return "";
-    else
-        return reverseString(str.substr(1)) + str.charAt(0);
-}
+const listImages = document.querySelectorAll('.list-item-img');
 
-function binariesSearch(numberToFind, arr) {
-    if (!arr.length) {
-        return  null;
-    }
+const xhr = new XMLHttpRequest();
 
-    let middle = Math.floor(arr.length - 1 / 2);
+listImages.forEach((item) => {
+    item.addEventListener('click', (e) => {
+        const id = e.target.dataset.id;
+        xhr.open('GET', `https://swapi.dev/api/films/${id}/`);
+        xhr.send();
+        xhr.onload = function () {
+            if (xhr.response) {
+                const response = JSON.parse(xhr.response);
+                if (Array.isArray(response.starships)) {
+                    const ul = e.target.parentElement.firstChild.nextSibling;
+                    const fragment = document.createDocumentFragment();
+                    const ships = [];
+                    response.starships.forEach((link) => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<span>${link}</span>`;
+                        fragment.appendChild(li);
+                        // const xhrStar = new XMLHttpRequest();
+                        // xhrStar.open('GET', link);
+                        // xhrStar.send();
+                        // xhrStar.onload = () => {
+                        //     if(xhrStar.response) {
+                        //         const data = JSON.parse(xhrStar.response);
+                        //         ships.push(data);
+                        //     }
+                        // }
+                    })
+                    // if (ships.length) {
+                    //     ships.forEach((data) => {
+                    //         const li = document.createElement('li');
+                    //         li.innerHTML = `<span>${data.name}</span>`;
+                    //         fragment.appendChild(li);
+                    //     })
+                        ul.appendChild(fragment);
+                        ul.style.display = 'block';
+                        ul.parentElement.style.position = 'relative';
+                        ul.style.position = 'absolute'
+                        ul.style.zIndex = '5';
 
+                    // }
+                }
+            }
+        };
+    })
+})
 
-    if (arr.length === 1 && arr[0] !== numberToFind) {
-        return false;
-    }
-
-    if (numberToFind === arr[middle]) {
-        return middle;
-    } else if (numberToFind < arr[middle]) {
-        return binariesSearch(numberToFind, arr.splice(0, middle));
-    } else if (numberToFind > arr[middle]) {
-        return binariesSearch(numberToFind, arr.splice(middle));
-    }
-}
-
-const array = [1, 2, 3, 4, 5, 6, 7]
-
-console.log(reverseString("Hello Anatoliy"));
-console.log(binariesSearch(5, array));
-``
