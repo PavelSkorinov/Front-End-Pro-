@@ -60,11 +60,11 @@ function getData(list) {
 function ulCustomize(ul) {
     ul.style.display = 'block';
     ul.style.paddingTop = "25%";
-    ul.style.color = "#ffe500";
     ul.parentElement.style.position = 'relative';
     ul.style.position = 'absolute';
 };
 
 function liCustomize(li) {
     li.style.listStyleType = "none";
+    li.style.color = "#ffe500";
 };
