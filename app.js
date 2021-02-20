@@ -12,38 +12,22 @@ listImages.forEach((item) => {
                 const response = JSON.parse(xhr.response);
                 if (Array.isArray(response.starships)) {
                     const ul = e.target.parentElement.firstChild.nextSibling;
-                    const fragment = document.createDocumentFragment();
-                    const ships = [];
+                    ul.classList.add("starhips_clicked");
                     response.starships.forEach((link) => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<span>${link}</span>`;
-                        fragment.appendChild(li);
-                        // const xhrStar = new XMLHttpRequest();
-                        // xhrStar.open('GET', link);
-                        // xhrStar.send();
-                        // xhrStar.onload = () => {
-                        //     if(xhrStar.response) {
-                        //         const data = JSON.parse(xhrStar.response);
-                        //         ships.push(data);
-                        //     }
-                        // }
-                    })
-                    // if (ships.length) {
-                    //     ships.forEach((data) => {
-                    //         const li = document.createElement('li');
-                    //         li.innerHTML = `<span>${data.name}</span>`;
-                    //         fragment.appendChild(li);
-                    //     })
-                        ul.appendChild(fragment);
-                        ul.style.display = 'block';
-                        ul.parentElement.style.position = 'relative';
-                        ul.style.position = 'absolute'
-                        ul.style.zIndex = '5';
-
-                    // }
-                }
-            }
+                        const xhrStar = new XMLHttpRequest();
+                        xhrStar.open('GET', link);
+                        xhrStar.onreadystatechange  = () => {
+                            if(xhrStar.readyState === XMLHttpRequest.DONE && xhrStar.status === 200) {
+                                const data = JSON.parse(xhrStar.response);
+                                const li = document.createElement('li');
+                                li.textContent = data.name;
+                                ul.appendChild(li);
+                            };
+                        };
+                        xhrStar.send();
+                    });
+                };
+            };
         };
-    })
-})
-
+    });
+});
