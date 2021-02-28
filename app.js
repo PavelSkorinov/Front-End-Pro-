@@ -1,173 +1,157 @@
-const TASKS_KEY = "list";
-const API_URL = 'https://todo.hillel.it';
-async function onSubmit() {
-    const data = new FormData();
-    data.append("value", document.getElementById("name").value);
-    const response = await fetch(`${API_URL}/auth/login`, { method: "post", body: data });
-    console.log(response);
-};
-class List {
-    list = []; 
+const TOKEN_KEY = 'token';
 
-    constructor(name) {
-        this.name = name;
+class ToDoList {
+    API_URL = 'https://todo.hillel.it';
+    token = localStorage.getItem(TOKEN_KEY);
+    list = document.querySelector('.list');
+    notes = [];
+
+    async authorization() {
+        const data = new URLSearchParams();
+        const username = document.getElementById("username").value;
+        const popup = document.querySelector('.modal');
+        data.append("value", username);
+        const response = await fetch(`${this.API_URL}/auth/login`,{
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    value: username
+                })
+            });
+        const { access_token } = await response.json();
+        this.token = access_token;
+        localStorage.setItem(TOKEN_KEY, access_token);
+        await this.getList();
+        popup.style.display = 'none';
     };
 
-    get list() {
-        return this.list;
+    async postNote(value, priority = 1) {
+        const response = await fetch(`${this.API_URL}/todo`, {
+                method: "POST",
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    value,
+                    priority
+                 })
+        });
+        const data = await response.json();
+        if(data.value) {
+            this.notes.push(data);
+        }
+        return data;
     };
 
-    createItem(options = []) {
-        const item = [{
-            id: Date.now(),
-            ...options
-        }];
-        this.list.push(item);
-        this.pushToLocalStorage();
-        return item;
+    async getList() {
+        const response = await fetch(`${this.API_URL}/todo`, {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                }
+        })
+        this.notes = await response.json();
+
+        this.notes.forEach((note) => {
+            this.renderNote(note._id, note.value);
+        });
     };
 
-    deleteItem(index) {
-        const deletedTask = this.list[index];
-        this.list.splice(index, 1);
-        this.pushToLocalStorage();
-        return deletedTask;
-    };
-
-    changeItem(updItem) {
-        const index = this.list.findIndex((el) => el.id === updItem.id);
-        this.list.splice(index, 1, updItem);
-        this.pushToLocalStorage();
-        return this.list[index];
-    };
-
-    pushToLocalStorage() {
-        localStorage.setItem(TASKS_KEY, JSON.stringify(this.list));
-    };
-
-    saveInLocalStorage() {     
-        const value = localStorage.getItem(TASKS_KEY);
-        if(value) {
-         return JSON.parse(value);
-        } else return this.list
-    };
-
-    fieldCheck(item) {
-        const requiredFields = item.filter(el => Object.values(el).includes(true));
-        return requiredFields.every(el => el['value'] !== undefined)
-   };
-};
-
-class ToDoList extends List {
-
-    constructor(name) {
-        super(name)
-    };
-
-    createItem(titleValue) {
-        const item = [{
-            name: 'title',
-            value: titleValue,
-            require: true
-        }, {
-            name: 'status',
-            value: "In Progress",
-            require: true
-        }];
-        if (this.fieldCheck(item)) {
-            super.createItem(item);
-        } else {
-            console.log("Error");
-        }     
+    renderNote(id, value) {
+        const li = document.createElement("li");
+        const textFragment = document.createDocumentFragment();
+        textFragment.append(value);
+        const changeBtn = document.createElement("button");
+        changeBtn.textContent = 'Change Note';
+        changeBtn.classList.add('addBtn', 'changeBtn');
+        changeBtn.addEventListener("click", async (e) => {
+            const newInput = document.querySelector('#username');
+            const newText = document.querySelector('.popup-text');
+            const popup = document.querySelector('.modal');
+            const changeButton = document.querySelector('#submit');
+            await this.changeNote(id, newInput.value);
+            changeButton.value = 'Change';
+            changeButton.onclick = function () {
+                li.textContent = newInput.value;
+                li.appendChild(changeBtn);
+                li.appendChild(span);
+                popup.style.display = 'none';
+            };
+            newText.textContent = 'New title';
+            newInput.placeholder = 'Enter new title name';
+            popup.style.display = 'block';
+        });
+        const span = document.createElement("span");
+        const text = document.createTextNode("\u00D7");
+        span.className = "close";
+        span.appendChild(text);
+        span.addEventListener('click', async (e) => {
+            await this.deleteNote(id);
+            const deleteLi = e.target.parentElement;
+            deleteLi.remove();
+        });
+        textFragment.appendChild(changeBtn);
+        textFragment.appendChild(span);
+        li.appendChild(textFragment);
+        li.addEventListener("click", async (event) => {
+            const changeButton = document.querySelector('.changeBtn');
+            if (event.target !== changeButton) {
+                await this.setComplete(id);
+                li.classList.toggle('checked');
+            }
+        });
+        this.list.appendChild(li);
     }
 
-    changeItem(updItem, newTitle) {
-        if (this.fieldCheck(updItem) && NewTitle) {
-            const changedItem = {...updItem, title: newTitle};
-            return super.changeItem(changedItem);
-        } else { 
-            console.log('Error');
+    async displayNote() {
+        const value = document.querySelector('#note').value;
+        const response = await this.postNote(value);
+        if (value === '') {
+            alert("Missing text");
+        } else if (response.value) {
+            this.renderNote(response._id, value);
         }
     };
 
-    setComplete(item) {
-        const index = this.list.findIndex((el) => el.id === item.id);
-        this.list.splice(index, 1, {
-            id: item.id,
-            title: item.title,
-            status: "Completed" 
+    async deleteNote(id) {
+        return await fetch(`${this.API_URL}/todo/${id}`, {
+            method: "DELETE",
+            headers: {
+            'Authorization': `Bearer ${this.token}`,
+            'Content-Type': 'application/json'
+            }
         });
-        this.pushToLocalStorage();
-        return this.list[index];
     };
 
-    showAllTasks() {
-        const itemsInProgress = this.list.filter((item) => item.status === 'In Progress')
-        const itemsCompleted = this.list.length - itemsInProgress.length;
-        const itemsStatus = {
-            completed: itemsCompleted,
-            uncompleted: itemsInProgress.length
-        };
-        return itemsStatus;
-    };
-};
-
-class ContactList extends List {
-
-    constructor(name) {
-        super(name);
+    async setComplete(id) {
+        return await fetch(`${this.API_URL}/todo/${id}/toggle`, {
+            method: "PUT",
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
     };
 
-    createItem(nameValue, surnameValue) {
-        const item = [{
-            name: 'name',
-            value: nameValue,
-            require: true
-        }, {
-            surname: 'surname',
-            value: surnameValue,
-            require: false
-        }];
-        if (this.fieldCheck(item)) {
-            super.createItem(item);  
-        } else {
-            console.log('Error');
-        };
+    async changeNote(id, value, priority = 1) {
+        const response = await fetch(`${this.API_URL}/todo/${id}`, {
+            method: "PUT",
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                value,
+                priority
+            })
+        });
+        const data = await response.json();
+        return data;
     };
+}
 
-    changeItem(updItem, newName, newSurname) {
-        if (this.fieldCheck(updItem) && (newName || newSurname)) {
-            const changedItem = {...updItem, name: newName, surname: newSurname};
-            return super.changeItem(changedItem);
-        } else { 
-            console.log('Error');    
-        };
-    };
-
-    findByName(name) {
-        const filteredName = this.list.filter((item) => item.name === name);
-        return filteredName;
-    };
-
-    findBySurname(surname) {
-        const filteredSurname = this.list.filter((item) => item.surname === surname);
-        return filteredSurname;
-    };
-};
-
-const contactList = new ContactList('First Contact List');
-const taskList = new ToDoList('First todo')
-contactList.createItem("Olya");
-taskList.createItem("Task #1");
-contactList.createItem("Anton", "Rechkov");
-contactList.createItem("Andrei", "Petrov");
-contactList.createItem("Anatoliy", "Klimchuk");
-taskList.createItem("Task #2");
-contactList.createItem("Vasya", "Pupkin");
-contactList.createItem("Petya", "Dyachenko");
-contactList.createItem("Anton", "Kozlovskiy");
-taskList.deleteItem(1);
-taskList.createItem("Task #3");
-taskList.showAllTasks();
-console.log(taskList);
-console.log(contactList);
+const todo = new ToDoList();
