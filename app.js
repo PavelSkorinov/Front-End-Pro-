@@ -16,12 +16,16 @@ class List {
         });       
     };
 
-    loadList() {
+    async loadData(url) {
+        const response =  await fetch(url);
+        return  await response.json();
+    };
+
+    loadListShips() {
         this.images.forEach((item) => {
             item.addEventListener('click', async (e) => {
                 const id = e.target.dataset.id;
-                const response =  await fetch(`https://swapi.dev/api/films/${id}/`);
-                const filmsData = await response.json(); 
+                const filmsData = await this.loadData(`https://swapi.dev/api/films/${id}/`);
                 const ulShips = e.target.closest('.list-item-response').firstElementChild;
                 const fragmentShip = document.createDocumentFragment();
                 const loadShips = await filmsData.starships;        
@@ -31,37 +35,42 @@ class List {
                         const liShips = document.createElement('li');
                         liShips.textContent = res.name;
                         liShips.dataset.url = res.url;
-                        fragmentShip.appendChild(liShips);
-                        ulShips.appendChild(fragmentShip);
-                        ulShips.classList.add("items_clicked");
-                        liShips.addEventListener("click", async (event) => {
-                            const fragmentFilms = document.createDocumentFragment();
-                            const filmUrl = event.target.dataset.url;
-                            const ulFilms = event.target.closest('.starships').nextElementSibling;
-                            const responseFilms =  await fetch(filmUrl);
-                            const filmsDataList = await responseFilms.json();
-                            const loadFilms = await filmsDataList.films;
-                            const filmsArr = this.getData(loadFilms);
-                            filmsArr.then((response) => {
-                                ulShips.style.display = "none";  
-                                response.forEach((res) => {
-                                    const liFilms = document.createElement('li');
-                                    liFilms.textContent = res.title;
-                                    fragmentFilms.appendChild(liFilms);
-                                    ulFilms.appendChild(fragmentFilms); 
-                                    ulFilms.classList.add("items_clicked");
-                                });                                                      
-                            });
-                        });                               
+                        this.renderList(ulShips, liShips, fragmentShip);
+                        this.loadListFilms(liShips, ulShips);
                     });
                 });
             })
         });
-    };    
-};
+    };
+
+    loadListFilms(li, ul) {
+        li.addEventListener("click", async (event) => {
+            const fragmentFilms = document.createDocumentFragment();
+            const filmUrl = event.target.dataset.url;
+            const ulFilms = event.target.closest('.starships').nextElementSibling;
+            const filmsDataList = await this.loadData(filmUrl);
+            const loadFilms = await filmsDataList.films;
+            const filmsArr = this.getData(loadFilms);
+            filmsArr.then((response) => {
+                ul.style.display = "none";
+                response.forEach((res) => {
+                    const liFilms = document.createElement('li');
+                    liFilms.textContent = res.title;
+                    this.renderList(ulFilms, liFilms, fragmentFilms);
+                });
+            });
+        });
+    }
+
+    renderList(ul, li, fragment) {
+        fragment.appendChild(li);
+        ul.appendChild(fragment);
+        ul.classList.add("items_clicked");
+    };
+}
 
 const starWars = new List(
     document.querySelectorAll('.list-item-img')
 );
 
-starWars.loadList();
+starWars.loadListShips();
