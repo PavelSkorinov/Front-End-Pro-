@@ -1,5 +1,4 @@
 class List {
-    ships = new Map();
 
     constructor(images) {
         this.images = images
@@ -11,8 +10,7 @@ class List {
         });
 
         return Promise.all(requests).then((response) => {
-            const load = Promise.all(response.map((value) => value.json()));
-            return load;
+            return Promise.all(response.map((value) => value.json()));
         });       
     };
 
