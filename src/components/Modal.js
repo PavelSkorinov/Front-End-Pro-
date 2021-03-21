@@ -10,9 +10,8 @@ const useStyles = theme => ({
     root: {
         '& > *': {
             margin: theme.spacing(1),
-        },
-    },
-});
+        }
+}});
 
 class ModalPopUp extends Component {
     constructor(props) {

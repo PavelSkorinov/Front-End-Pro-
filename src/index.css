@@ -39,6 +39,7 @@ code {
 
 .container-button {
   padding-bottom: 30px;
+  text-align: center;
 }
 
 .form {
@@ -67,6 +68,7 @@ code {
 .articles-container {
   display: flex;
   flex-direction: column;
+  margin-right: 20px;
 }
 
 .articles {
